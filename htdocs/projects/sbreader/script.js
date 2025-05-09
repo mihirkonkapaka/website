@@ -296,7 +296,10 @@ function submitAnswer() {
         }
     }
 
-    document.getElementById('correction-button').innerHTML = `<button onclick="correctScore(${isCorrect})" class="btn ${isCorrect ? 'red' : 'green'}-btn">${isCorrect ? 'I was wrong' : 'I was correct'}</button>`;
+    document.getElementById('correction-button').innerHTML = `<button id="correction-button-button" class="btn ${isCorrect ? 'red' : 'green'}-btn">${isCorrect ? 'I was wrong' : 'I was correct'}</button>`;
+    document.getElementById('correction-button-button').addEventListener('click', function () {
+        correctScore(isCorrect);
+    });
     document.getElementById('correction-button').classList.remove('hidden');
 
     readyForNext = true;
@@ -364,11 +367,22 @@ function editDistance(s1, s2) {
 
 function correctScore(wasCorrect) {
     if (wasCorrect) {
-        score -= answeringBonus ? 10 : 8;
+        if (answeringBonus) {
+            score -= 10;
+            bonusesCorrect--;
+        } else {
+            score -= 8;
+            tossupsCorrect--;
+        }
+
     } else {
-        score += answeringBonus ? 10 : 8;
-        if (!answeringBonus) {
-            setTimeout(() => startQuestion(true), 1000);
+        if (answeringBonus) {
+            score += 10;
+            bonusesCorrect++;
+        } else {
+            score += 8;
+            tossupsCorrect++;
+            startQuestion(true);
         }
     }
     updateScore();
@@ -376,7 +390,7 @@ function correctScore(wasCorrect) {
 }
 
 function updateScore() {
-    document.getElementById('score-display').textContent = `${bonusesCorrect}/${tossupsCorrect}/${negs} with ${tossupsSeen} tossups seen`;
+    document.getElementById('score-display').textContent = `${bonusesCorrect}/${tossupsCorrect}/${negs} with ${tossupsSeen} tossups seen [${bonusesCorrect*10 + (tossupsCorrect - negs)*4}]`;
 }
 
 function showAnswerResult(correctAnswer, isCorrect) {
