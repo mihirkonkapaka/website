@@ -5,16 +5,19 @@
     <meta charset="UTF-8" />
     <title>SBReader</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="styles.css" />
     <script>
         window.MathJax = {
             loader: { load: ['input/asciimath', 'output/chtml'] },
             asciimath: {
-                delimiters: [['`', '`']]
+                delimiters: [['`', '`']],
+            },
+            startup: {
+                typeset: false
             }
         };
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/startup.js" async></script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/startup.js"></script>
+    <link rel="stylesheet" href="styles.css" />
 </head>
 
 <body>
@@ -32,7 +35,7 @@
         <div id="main-split">
             <!-- Left Panel -->
             <div id="left-panel">
-                <div id="score-display" class="tracker">0/0/0 with 0 tossups seen [0]</div>
+                <div id="score-display" class="tracker">0/0/0 with 0 tossups seen [0 pts]</div>
                 <div id="answer-section" class="hidden">
                     <input type="text" id="answer-input" placeholder="Type your answer..." autocomplete="off" />
                     <button id="submit-answer-button" class="btn green-btn">Submit</button>

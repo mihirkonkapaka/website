@@ -32,6 +32,7 @@ function blurAll() {
     document.body.removeChild(tmp);
 }
 
+let questionSection = document.getElementById('question-text')
 document.getElementById('start-button').addEventListener('click', loadAndStartQuestion);
 document.getElementById('pause-button').addEventListener('click', pauseReading);
 document.getElementById('skip-button').addEventListener('click', handleSkipOrNext);
@@ -65,10 +66,9 @@ async function loadAndStartQuestion() {
         let questionsPool;
 
         if (selectedCategory == "any") {
-            questionsPool = JSON['questions'];
+            questionsPool = questionJSON['questions'];
         } else {
-            console.log(selectedCategory.toLowerCase);
-            questionsPool = JSON['questions'].filter(q => q.category.toLowerCase() == selectedCategory.toLowerCase());
+            questionsPool = questionJSON['questions'].filter(q => q.category.toLowerCase() == selectedCategory.toLowerCase());
         }
 
         if (questionsPool.length === 0) {
@@ -107,7 +107,6 @@ function startQuestion(isBonus) {
 
     document.getElementById('question-type').textContent = `${questionType} ${format} ${category}`;
     document.getElementById('question-text').textContent = '';
-
     updateTimerBar(0);
     clearTimers();
 
@@ -116,12 +115,17 @@ function startQuestion(isBonus) {
 
 
     let readingDelay = 700 - 6.9 * document.getElementById('readingSlider').value;
+    let qText = ''
     readingInterval = setInterval(() => {
         if (currentWordIndex < questionWords.length) {
-            document.getElementById('question-text').textContent += questionWords[currentWordIndex] + ' ';
+            qText += questionWords[currentWordIndex] + ' ';
+            const questionElem = document.getElementById('question-text');
+            questionElem.textContent = qText.trim();  // Use innerHTML to preserve backticks
             currentWordIndex++;
+            MathJax.typesetPromise([questionElem]);
         } else {
             clearInterval(readingInterval);
+            MathJax.typesetPromise([questionElem]);
             startBuzzTimer();
         }
     }, readingDelay);
@@ -427,9 +431,7 @@ function displayQuestion(text) {
     const questionSection = document.getElementById('question-section');
     const sanitizedText = sanitizeMathBackticks(text);
     questionSection.innerHTML = sanitizedText;
-    if (window.MathJax) {
-        MathJax.typesetPromise([questionSection]);
-    }
+    MathJax.Hub.Typeset(questionSection)
 }
 
 function startTimerBar(durationSeconds) {
@@ -502,6 +504,5 @@ function sanitizeResponse(response) {
 }
 
 function outputUpdate() {
-    console.log('update!');
     document.getElementById('readingValue').innerText = document.getElementById('readingSlider').value;
 }
